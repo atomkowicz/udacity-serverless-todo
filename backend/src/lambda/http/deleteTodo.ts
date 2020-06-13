@@ -14,26 +14,43 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const jwt = event.headers.Authorization.split(' ').pop()
   const userId = parseUserId(jwt)
 
-  await docClient.delete({
-    TableName: todosTable,
-    Key: {
-      userId,
-      todoId
-    }
-  }).promise()
-
-  logger.info(`Todo deleted`, {
-    key: todoId,
-  })
-
-  return {
-    statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true
-    },
-    body: JSON.stringify({
-      item: true
+  try {
+    await docClient.delete({
+      TableName: todosTable,
+      Key: {
+        userId,
+        todoId
+      }
+    }).promise()
+  
+    logger.info(`Todo deleted`, {
+      key: todoId,
     })
+  
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: JSON.stringify({
+        item: true
+      })
+    }
+  } catch(e) {
+    logger.info(`Unable to delete Todo item`, {
+      key: todoId,
+    })
+  
+    return {
+      statusCode: 404,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: 'error while deleting item'
+    }
   }
+
+
 }

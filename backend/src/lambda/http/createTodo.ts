@@ -1,12 +1,48 @@
 import 'source-map-support/register'
-
+import * as AWS from 'aws-sdk'
+import * as uuid from 'uuid'
+import { parseUserId } from '../../auth/utils'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
+import { createLogger } from '../../utils/logger'
+
+const logger = createLogger('createTodo')
+const docClient = new AWS.DynamoDB.DocumentClient()
+const todosTable = process.env.TODOS_TABLE
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const newTodo: CreateTodoRequest = JSON.parse(event.body)
+  const parsedBody: CreateTodoRequest = JSON.parse(event.body)
 
-  // TODO: Implement creating a new TODO item
-  return undefined
+  const todoId = uuid.v4()
+  const jwt = event.headers.Authorization.split(' ').pop()
+  const userId = parseUserId(jwt)
+  const timestamp = new Date().toISOString()
+
+  const newTodo = {
+    todoId: todoId,
+    userId: userId,
+    createdAt: timestamp,
+    ...parsedBody,
+    attachmentUrl: 'xxx'
+  }
+
+  await docClient.put({
+    TableName: todosTable,
+    Item: newTodo
+  }).promise()
+
+  logger.info(`Todo Created`, {
+    key: newTodo,
+  })
+
+  return {
+    statusCode: 201,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
+    },
+    body: JSON.stringify({
+      item: newTodo
+    })
+  }
 }

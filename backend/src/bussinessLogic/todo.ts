@@ -6,8 +6,7 @@ import { CreateTodoRequest } from "../requests/CreateTodoRequest"
 import { UpdateTodoRequest } from "../requests/UpdateTodoRequest"
 
 export async function getTodosForUser(userId: string): Promise<TodoItem[]> {
-    const result = await getAllTodos(userId)
-    return result
+    return await getAllTodos(userId)
 }
 
 export async function createTodoForUser(parsedBody: CreateTodoRequest, userId: string): Promise<TodoItem> {

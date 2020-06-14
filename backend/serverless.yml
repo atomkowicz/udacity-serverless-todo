@@ -9,6 +9,7 @@ plugins:
   - serverless-plugin-tracing
   - serverless-reqvalidator-plugin
   - serverless-aws-documentation
+  
 custom:
   serverless-offline:
     httpPort: 8080

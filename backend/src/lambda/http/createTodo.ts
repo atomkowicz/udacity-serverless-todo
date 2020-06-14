@@ -5,10 +5,10 @@ import { createTodoForUser } from '../../bussinessLogic/todo'
 import { getUserIdFromAuthHeader } from '../../auth/utils'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  
+
   const parsedBody: CreateTodoRequest = JSON.parse(event.body)
   const userId = getUserIdFromAuthHeader(event.headers.Authorization)
-  
+
   const newTodo = await createTodoForUser(parsedBody, userId)
 
   return {

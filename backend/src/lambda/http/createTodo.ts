@@ -23,7 +23,6 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     userId: userId,
     createdAt: timestamp,
     ...parsedBody,
-    attachmentUrl: 'xxx'
   }
 
   await docClient.put({

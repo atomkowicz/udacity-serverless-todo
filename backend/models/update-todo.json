@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema":"http://json-schema.org/draft-04/schema",
     "title": "group",
     "type": "object",
     "properties": {
@@ -8,12 +8,11 @@
       },
       "dueDate": {
         "type": "string"
+      },
+      "done": {
+        "type": "boolean"
       }
     },
-    "required": [
-      "name",
-      "dueDate"
-    ],
+    "required": ["name", "dueDate", "done"],
     "additionalProperties": false
   }
-  

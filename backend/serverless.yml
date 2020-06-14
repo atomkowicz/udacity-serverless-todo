@@ -26,6 +26,10 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
 
+  tracing:
+    lambda: true
+    apiGateway: true
+
   environment:
     TODOS_TABLE: Todo-${self:provider.stage}
     TODO_INDEX_NAME: TodoIdIndex

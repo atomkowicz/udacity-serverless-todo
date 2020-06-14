@@ -28,3 +28,15 @@ export async function getAllTodos(userId: string): Promise<TodoItem[]> {
 
     return result.Items as TodoItem[]
 }
+
+export async function createTodo(newTodo: TodoItem): Promise<TodoItem> {
+
+    await docClient.put({
+        TableName: todosTable,
+        Item: newTodo
+    }).promise()
+
+    logger.info('Todo Created', { key: newTodo })
+
+    return newTodo
+}

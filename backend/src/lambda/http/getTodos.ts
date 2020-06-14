@@ -17,5 +17,3 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     body: JSON.stringify({ items: todos })
   }
 }
-
-

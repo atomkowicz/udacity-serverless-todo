@@ -9,6 +9,7 @@ const logger = createLogger('generateUploadUrl')
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todosTable = process.env.TODOS_TABLE
 const todosbucket = process.env.TODOS_S3_BUCKET
+const signedUrlExpiration = process.env.SIGNED_URL_EXPIRATION
 
 const s3 = new AWS.S3({
   signatureVersion: 'v4'
@@ -48,7 +49,7 @@ export async function getUploadPresignedURL(userId: string, todoId: string): Pro
   const uploadURL = s3.getSignedUrl('putObject', {
     Bucket: todosbucket,
     Key: `${userId}/${todoId}`,
-    Expires: 300
+    Expires: signedUrlExpiration
   })
   
   return uploadURL

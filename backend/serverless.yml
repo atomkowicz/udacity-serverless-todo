@@ -3,8 +3,6 @@ service:
 
 plugins:
   - serverless-webpack
-  - serverless-reqvalidator-plugin
-  - serverless-aws-documentation
   - serverless-iam-roles-per-function
   - serverless-dynamodb-local
   - serverless-offline
@@ -20,16 +18,6 @@ custom:
       migrate: true
     stages:
       - ${self:provider.stage} 
-  documentation:
-    api:
-      info:
-        version: v1.0.0
-        title: Udagram Todos API
-        description: Serverless application for creating todos
-    models:
-      - name: TodoRequest
-        contentType: application/json
-        schema: ${file(models/create-todo.json)}
 
 provider:
   name: aws
@@ -44,23 +32,6 @@ provider:
     AUTH0_JSON_KEY_URL: https://dev-1nt0v2c1.auth0.com/.well-known/jwks.json
     TODOS_S3_BUCKET: serverless-todos-bucket-w079lbm6ea-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
-
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Scan
-        - dynamodb:PutItem
-        - dynamodb:GetItem
-      Resource: arn:aws:dynamodb:${self:provider.region}:274225709315:table/${self:provider.environment.TODOS_TABLE}  
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-      Resource: arn:aws:dynamodb:${self:provider.region}:274225709315:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODO_INDEX_NAME}
-    - Effect: Allow
-      Action:
-        - s3:PutObject
-        - s3:GetObject
-      Resource: arn:aws:s3:::${self:provider.environment.TODOS_S3_BUCKET}/*
 
 functions:
 
@@ -79,7 +50,7 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:Query
-        Resource: arn:aws:dynamodb:${self:provider.region}:274225709315:table/${self:provider.environment.TODOS_TABLE}      
+        Resource: arn:aws:dynamodb:${self:provider.region}:274225709315:table/${self:provider.environment.TODOS_TABLE}
 
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
@@ -89,12 +60,9 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
-          # reqValidatorName: RequestBodyValidator
-          # documentation:
-          #   summary: Create a new todo
-          #   description: Create a new todo
-          #   requestModels:
-          #     'application/json': TodoRequest
+          request:
+            schema:
+              application/json: ${file(src/requests/schema/create-todo.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -109,6 +77,9 @@ functions:
           path: todos/{todoId}
           cors: true
           authorizer: Auth
+          request:
+            schema:
+              application/json: ${file(src/requests/schema/update-todo.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -159,15 +130,6 @@ resources:
         ResponseType: DEFAULT_4XX
         RestApiId:
           Ref: ApiGatewayRestApi
-
-    RequestBodyValidator:
-      Type: AWS::ApiGateway::RequestValidator
-      Properties:
-        Name: 'request-body-validator'
-        RestApiId:
-          Ref: ApiGatewayRestApi
-        ValidateRequestBody: true
-        ValidateRequestParameters: false
 
     TodoDynamoDBTable:
       Type: "AWS::DynamoDB::Table"

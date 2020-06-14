@@ -1,6 +1,6 @@
 {
-    "$schema":"http://json-schema.org/draft-04/schema",
-    "title": "group",
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Create todo",
     "type": "object",
     "properties": {
       "name": {
@@ -8,11 +8,12 @@
       },
       "dueDate": {
         "type": "string"
-      },
-      "done": {
-        "type": "boolean"
       }
     },
-    "required": ["name", "dueDate", "done"],
+    "required": [
+      "name",
+      "dueDate"
+    ],
     "additionalProperties": false
   }
+  

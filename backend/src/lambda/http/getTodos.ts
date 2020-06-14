@@ -8,6 +8,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const userId = getUserIdFromAuthHeader(event.headers.Authorization)
   const todos = await getTodosForUser(userId)
 
+  
   return {
     statusCode: 200,
     headers: {

@@ -6,6 +6,7 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-dynamodb-local
   - serverless-offline
+  - serverless-plugin-tracing
 
 custom:
   serverless-offline:
@@ -30,6 +31,14 @@ provider:
     lambda: true
     apiGateway: true
 
+  iamRoleStatements:
+    - Effect: "Allow" # xray permissions (required)
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
+        
   environment:
     TODOS_TABLE: Todo-${self:provider.stage}
     TODO_INDEX_NAME: TodoIdIndex

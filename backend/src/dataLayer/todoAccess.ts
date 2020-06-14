@@ -2,7 +2,6 @@ import * as AWS from 'aws-sdk'
 import { TodoItem } from "../models/TodoItem"
 import { createLogger } from '../utils/logger'
 import * as AWSXRay from 'aws-xray-sdk';
-import { CreateTodoRequest } from '../requests/CreateTodoRequest';
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest';
 
 const XAWS = AWSXRay.captureAWS(AWS) as typeof AWS
@@ -91,14 +90,14 @@ export async function updateTodo(todo: UpdateTodoRequest, userId: string, todoId
     return 'updated'
 }
 
-export async function getPresignedUrl(userId: string, todoId: string): Promise<string> {
-    const attachmentUrl = await getUploadPresignedURL(userId, todoId)
-    await uploadAttachementToS3(userId, todoId)
+export async function getAttachementUrl(userId: string, todoId: string): Promise<string> {
+    const attachmentUrl = await getS3PresignedUrl(userId, todoId)
+    await amendAttachemntUrl(userId, todoId)
     return attachmentUrl;
 }
 
-export async function getUploadPresignedURL(userId: string, todoId: string): Promise<string> {
-    logger.info(`Create signed url`,{
+export async function getS3PresignedUrl(userId: string, todoId: string): Promise<string> {
+    logger.info('Create presigned url',{
       userId: userId,
       todoId: todoId
     })
@@ -112,7 +111,7 @@ export async function getUploadPresignedURL(userId: string, todoId: string): Pro
     return uploadURL
   }
   
-  export async function uploadAttachementToS3(userId: string, todoId: string): Promise<TodoItem> {
+  export async function amendAttachemntUrl(userId: string, todoId: string): Promise<TodoItem> {
     
     const updatedTodo = await docClient.update({
       TableName: todosTable,
@@ -127,7 +126,7 @@ export async function getUploadPresignedURL(userId: string, todoId: string): Pro
       ReturnValues: "ALL_NEW"
     }).promise()
   
-    logger.info(`Todo ${todoId} updated with attachment : ${todoId}`)
+    logger.info(`Todo ${todoId} updated with attachment url`)
     
     return updatedTodo.Attributes as TodoItem
   }

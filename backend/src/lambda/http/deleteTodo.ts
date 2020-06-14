@@ -4,6 +4,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } f
 import { deleteTodoForUser } from '../../bussinessLogic/todo'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  
   const todoId = event.pathParameters.todoId
   const userId = getUserIdFromAuthHeader(event.headers.Authorization)
 

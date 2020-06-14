@@ -1,6 +1,6 @@
 import { TodoItem } from "../models/TodoItem"
 import 'source-map-support/register'
-import { getAllTodos, createTodo, deleteTodo, updateTodo, getPresignedUrl } from "../dataLayer/todoAccess"
+import { getAllTodos, createTodo, deleteTodo, updateTodo, getAttachementUrl } from "../dataLayer/todoAccess"
 import * as uuid from 'uuid'
 import { CreateTodoRequest } from "../requests/CreateTodoRequest"
 import { UpdateTodoRequest } from "../requests/UpdateTodoRequest"
@@ -34,5 +34,5 @@ export async function updateTodoForUser(parsedBody: UpdateTodoRequest, userId: s
 }
 
 export async function getImageUrl(userId: string, todoId: string): Promise<string> {
-    return await getPresignedUrl(userId, todoId)
+    return await getAttachementUrl(userId, todoId)
 }

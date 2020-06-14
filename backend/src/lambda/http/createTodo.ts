@@ -8,7 +8,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   
   const parsedBody: CreateTodoRequest = JSON.parse(event.body)
   const userId = getUserIdFromAuthHeader(event.headers.Authorization)
-
+  
   const newTodo = await createTodoForUser(parsedBody, userId)
 
   return {
